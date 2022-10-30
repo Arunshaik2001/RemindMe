@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">RemindMe</string>
+
+    <string name="reminder_instance_key" translatable="false">Reminder Instance</string>
+    <string name="reminder_worker_tag" translatable="false">ReminderTag</string>
+    <string name="reminder_id" translatable="false">Reminder_ID</string>
+    <string name="worker_tag" translatable="false">WORKER_TAG</string>
+    <string name="postpone_action" translatable="false">POSTPONE</string>
+    <string name="complete_action" translatable="false">COMPLETE</string>
+    <string name="one_hour" translatable="false">1 hour</string>
+    <string name="done" translatable="false">Done</string>
+
+    <string name="notification_channel_id" translatable="false">12345678</string>
+    <string name="notification_channel_name" translatable="false">NoteX</string>
+    <string name="notification_channel_description" translatable="false">Default notification channel</string>
+</resources>
