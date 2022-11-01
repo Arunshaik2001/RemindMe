@@ -15,8 +15,6 @@ data class Reminder(
 enum class RemindType{
     HOURLY,
     DAILY,
-    MONTHLY,
-    YEARLY,
     WEEKLY,
     NONE
 }

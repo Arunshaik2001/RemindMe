@@ -29,16 +29,16 @@ class NotificationHelper {
         val workerTag =
             "${context.resources.getString(R.string.reminder_worker_tag)}${notificationDTO.id}"
 
-        val postponeIntent = Intent(context, NotificationBroadCastReceiver::class.java).apply {
-            action = context.resources.getString(R.string.postpone_action)
+        val ignoreIntent = Intent(context, NotificationBroadCastReceiver::class.java).apply {
+            action = context.resources.getString(R.string.ok_action)
             putExtra(context.resources.getString(R.string.worker_tag), workerTag)
             putExtra(context.resources.getString(R.string.reminder_id), notificationDTO.id)
             putExtra(Constants.NOTIFICATION_ID, notificationId)
         }
 
-        val postponePendingIntent = PendingIntent.getBroadcast(
+        val ignorePendingIntent = PendingIntent.getBroadcast(
             context, 0,
-            postponeIntent, PendingIntent.FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
+            ignoreIntent, PendingIntent.FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
         )
 
 
@@ -55,13 +55,13 @@ class NotificationHelper {
 
         val builder =
             NotificationCompat.Builder(context, context.getString(R.string.notification_channel_id))
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.drawable.thinking)
                 .setContentTitle(notificationDTO.title)
                 .setContentText(notificationDTO.description)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(actionPendingIntent)
-                .addAction(R.drawable.ic_launcher_background, context.getString(R.string.one_hour), postponePendingIntent)
-                .addAction(R.drawable.ic_launcher_background, context.getString(R.string.done), cancelPendingIntent)
+                .addAction(R.drawable.thinking, context.getString(R.string.ok), ignorePendingIntent)
+                .addAction(R.drawable.thinking, context.getString(R.string.done), cancelPendingIntent)
                 .setAutoCancel(true)
 
         with(NotificationManagerCompat.from(context)) {

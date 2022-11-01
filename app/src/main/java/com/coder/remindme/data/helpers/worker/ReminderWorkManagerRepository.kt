@@ -13,12 +13,31 @@ import com.coder.remindme.domain.model.RemindType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ReminderWorkManagerRepository @Inject constructor(private val reminderDao: ReminderDao) {
+
+    val HOURS_PER_DAY = 24
+
+    /**
+     * Minutes per hour.
+     */
+    val MINUTES_PER_HOUR = 60
+
+    /**
+     * Minutes per day.
+     */
+    val MINUTES_PER_DAY = MINUTES_PER_HOUR * HOURS_PER_DAY
+
+    val DAYS_PER_WEEK = 7
+
+    val HOURS_PER_WEEK = DAYS_PER_WEEK * HOURS_PER_DAY
 
     fun createWorkRequestAndEnqueue(
         context: Context,
@@ -27,7 +46,7 @@ class ReminderWorkManagerRepository @Inject constructor(private val reminderDao:
         isFirstTime: Boolean = true
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            Log.i(Constants.TAG,"createWorkRequestAndEnqueue")
+            Log.i(Constants.TAG, "createWorkRequestAndEnqueue")
             val data: Data.Builder = Data.Builder()
             data.putLong(
                 context.resources.getString(R.string.reminder_instance_key),
@@ -41,8 +60,16 @@ class ReminderWorkManagerRepository @Inject constructor(private val reminderDao:
 
             val reminder = reminderDao.getReminderById(reminderId).toReminder()
 
+            if (time.toEpochMilli() > reminder.reminderEnd.toEpochMilli())
+                return@launch
+
             val initialDelay = if (isFirstTime) {
-                time.toEpochMilli() - Instant.now().toEpochMilli()
+                val timeDiff = time.toEpochMilli() - Instant.now(Clock.systemUTC()).toEpochMilli()
+                Log.i(
+                    Constants.TAG,
+                    "isFirstTime $timeDiff ${time.epochSecond} ${Instant.now(Clock.systemUTC()).epochSecond}"
+                )
+                timeDiff
             } else {
                 getDurationInMilli(reminderStrategy = reminder.remindType, reminderTime = time)
             }
@@ -66,9 +93,8 @@ class ReminderWorkManagerRepository @Inject constructor(private val reminderDao:
     ): Long {
         val duration: Long = when (reminderStrategy) {
             RemindType.DAILY -> Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()
-            RemindType.MONTHLY -> Instant.now().plus(1, ChronoUnit.MONTHS).toEpochMilli()
-            RemindType.YEARLY -> Instant.now().plus(1, ChronoUnit.YEARS).toEpochMilli()
-            RemindType.WEEKLY -> Instant.now().plus(1, ChronoUnit.WEEKS).toEpochMilli()
+            RemindType.WEEKLY -> Instant.now().plus(HOURS_PER_WEEK.toLong(), ChronoUnit.HOURS)
+                .toEpochMilli()
             RemindType.HOURLY -> Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
             else -> reminderTime.toEpochMilli()
         }

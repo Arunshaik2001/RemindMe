@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.coder.core.util.Constants
 import com.coder.core.util.Resource
+import com.coder.remindme.R
 import com.coder.remindme.data.helpers.worker.ReminderWorkManagerRepository
 import com.coder.remindme.data.local.dao.ReminderDao
 import com.coder.remindme.data.local.entity.ReminderEntity
@@ -16,6 +17,9 @@ class ReminderRepositoryImpl(
     private val reminderDao: ReminderDao,
     private val appContext: Context
 ) : ReminderRepository {
+
+    private val reminderWorkManager = ReminderWorkManagerRepository(reminderDao)
+
     override fun insertReminder(reminder: Reminder): Flow<Resource<Long>> {
         Log.i(Constants.TAG, "insertReminder")
 
@@ -30,8 +34,6 @@ class ReminderRepositoryImpl(
             )
             val id = reminderDao.insertReminder(reminderEntity)
 
-
-            val reminderWorkManager = ReminderWorkManagerRepository(reminderDao)
             reminderWorkManager.createWorkRequestAndEnqueue(
                 appContext,
                 reminderId = id,
@@ -46,6 +48,8 @@ class ReminderRepositoryImpl(
         return flow {
             emit(Resource.Loading<Unit>())
             reminderDao.deleteReminder(reminder.id)
+            val tag = "${appContext.getString(R.string.reminder_worker_tag)}${reminder.id}"
+            reminderWorkManager.cancelWorkRequest(appContext,tag)
             emit(Resource.Success<Unit>(null))
         }
     }

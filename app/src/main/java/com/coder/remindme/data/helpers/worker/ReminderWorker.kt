@@ -37,8 +37,7 @@ class ReminderWorker @AssistedInject constructor(
         }
         val reminder: Reminder = reminderDao.getReminderById(reminderId).toReminder()
 
-        val localDate: LocalDateTime =
-            LocalDateTime.ofInstant(reminder.reminderStart, ZoneOffset.UTC)
+        LocalDateTime.ofInstant(reminder.reminderStart, ZoneOffset.UTC)
 
         Log.i(Constants.TAG,"doWork()")
 
@@ -46,7 +45,7 @@ class ReminderWorker @AssistedInject constructor(
             appContext,
             Notification(
                 title = reminder.title,
-                description = "${reminder.description} <= ${localDate.hour}:${localDate.minute}",
+                description = reminder.description,
                 id = reminderId,
             )
         )
