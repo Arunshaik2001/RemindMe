@@ -17,19 +17,28 @@ kotlin{
 }
 
 android {
-    compileSdk 31
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\user\\Desktop\\keystore6.jks')
+            storePassword 'Arun@2001'
+            keyAlias 'key0'
+            keyPassword 'Arun@2001'
+        }
+    }
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.coder.remindme"
         minSdk 26
-        targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        targetSdk 32
+        versionCode 6
+        versionName "6.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
@@ -116,4 +125,6 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha04"
 
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
+
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 }

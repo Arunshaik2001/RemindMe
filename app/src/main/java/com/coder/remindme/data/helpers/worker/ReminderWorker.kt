@@ -1,19 +1,19 @@
 package com.coder.remindme.data.helpers.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.coder.core.util.Constants
 import com.coder.remindme.R
 import com.coder.remindme.data.local.dao.ReminderDao
 import com.coder.remindme.data.helpers.notification.NotificationHelper
+import com.coder.remindme.data.local.entity.ReminderEntity
 import com.coder.remindme.domain.model.Notification
 import com.coder.remindme.domain.model.RemindType
 import com.coder.remindme.domain.model.Reminder
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -39,7 +39,7 @@ class ReminderWorker @AssistedInject constructor(
 
         LocalDateTime.ofInstant(reminder.reminderStart, ZoneOffset.UTC)
 
-        Log.i(Constants.TAG,"doWork()")
+        notificationHelper.removeNotification(reminderId.toInt(),appContext)
 
         notificationHelper.createNotification(
             appContext,
@@ -56,6 +56,21 @@ class ReminderWorker @AssistedInject constructor(
                 context = appContext,
                 isFirstTime = false,
                 time = reminder.reminderStart
+            )
+        } else {
+            val newReminder = reminder.copy(hasCompleted = true, completedOn = Instant.now())
+            reminderDao.insertReminder(
+                reminder = ReminderEntity(
+                    newReminder.id,
+                    newReminder.title,
+                    newReminder.description,
+                    newReminder.reminderStart,
+                    newReminder.reminderEnd,
+                    newReminder.remindType,
+                    newReminder.hasCompleted,
+                    newReminder.completedOn,
+                    newReminder.hasCanceled
+                )
             )
         }
         return Result.success()

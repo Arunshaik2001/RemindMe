@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.coder.remindme">
 
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
+
     <application
         android:name="com.coder.ReminderApplication"
         android:allowBackup="true"
@@ -11,15 +13,21 @@
         android:roundIcon="@mipmap/thinking"
         android:supportsRtl="true"
         android:theme="@style/Theme.RemindMe">
+
         <activity
             android:name="com.coder.remindme.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.RemindMe.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="@string/app_name_lowercase" android:host="reminder"/>
             </intent-filter>
         </activity>
 

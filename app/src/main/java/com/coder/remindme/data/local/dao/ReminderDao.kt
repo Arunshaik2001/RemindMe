@@ -1,10 +1,12 @@
 package com.coder.remindme.data.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import com.coder.remindme.data.local.entity.ReminderEntity
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -20,5 +22,5 @@ interface ReminderDao {
     suspend fun getReminderById(reminderId: Long): ReminderEntity
 
     @Query("SELECT * FROM reminders")
-    suspend fun getReminders(): List<ReminderEntity>
+    fun getReminders(): Flow<List<ReminderEntity>>
 }

@@ -1,5 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">RemindMe</string>
+    <string name="app_name_lowercase">remindme</string>
 
     <string name="reminder_instance_key" translatable="false">Reminder Instance</string>
     <string name="reminder_worker_tag" translatable="false">ReminderTag</string>
@@ -11,6 +12,6 @@
     <string name="done" translatable="false">Done</string>
 
     <string name="notification_channel_id" translatable="false">12345678</string>
-    <string name="notification_channel_name" translatable="false">NoteX</string>
+    <string name="notification_channel_name" translatable="false">RemindMe</string>
     <string name="notification_channel_description" translatable="false">Default notification channel</string>
 </resources>

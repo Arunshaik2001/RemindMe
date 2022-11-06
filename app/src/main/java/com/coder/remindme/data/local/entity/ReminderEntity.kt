@@ -14,7 +14,10 @@ data class ReminderEntity(
     val description: String,
     val reminderStart: Instant,
     val reminderEnd: Instant,
-    val remindType: RemindType
+    val remindType: RemindType,
+    val hasCompleted: Boolean = false,
+    val completedOn: Instant? = null,
+    val hasCanceled: Boolean = false
 ) {
     fun toReminder(): Reminder {
         return Reminder(
@@ -23,7 +26,10 @@ data class ReminderEntity(
             description,
             reminderStart,
             reminderEnd,
-            remindType
+            remindType,
+            hasCompleted,
+            completedOn,
+            hasCanceled
         )
     }
 }

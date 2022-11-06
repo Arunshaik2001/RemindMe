@@ -58,6 +58,7 @@ class NotificationHelper {
                 .setSmallIcon(R.drawable.thinking)
                 .setContentTitle(notificationDTO.title)
                 .setContentText(notificationDTO.description)
+                .setColor(context.getColor(R.color.purple_500))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(actionPendingIntent)
                 .addAction(R.drawable.thinking, context.getString(R.string.ok), ignorePendingIntent)
@@ -65,9 +66,13 @@ class NotificationHelper {
                 .setAutoCancel(true)
 
         with(NotificationManagerCompat.from(context)) {
-            // notificationId is a unique int for each notification that you must define
-            Log.i(Constants.TAG,"createNotification()")
             notify(notificationId, builder.build())
+        }
+    }
+
+    fun removeNotification(id: Int, context: Context){
+        with(NotificationManagerCompat.from(context)) {
+            cancel(id)
         }
     }
 }

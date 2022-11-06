@@ -1,16 +1,16 @@
 package com.coder.remindme.data.repository
 
 import android.content.Context
-import android.util.Log
-import com.coder.core.util.Constants
 import com.coder.core.util.Resource
 import com.coder.remindme.R
+import com.coder.remindme.data.helpers.notification.NotificationHelper
 import com.coder.remindme.data.helpers.worker.ReminderWorkManagerRepository
 import com.coder.remindme.data.local.dao.ReminderDao
 import com.coder.remindme.data.local.entity.ReminderEntity
 import com.coder.remindme.domain.model.Reminder
 import com.coder.remindme.domain.repository.ReminderRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 class ReminderRepositoryImpl(
@@ -21,7 +21,6 @@ class ReminderRepositoryImpl(
     private val reminderWorkManager = ReminderWorkManagerRepository(reminderDao)
 
     override fun insertReminder(reminder: Reminder): Flow<Resource<Long>> {
-        Log.i(Constants.TAG, "insertReminder")
 
         return flow {
             emit(Resource.Loading<Long>())
@@ -30,7 +29,10 @@ class ReminderRepositoryImpl(
                 reminderEnd = reminder.reminderEnd,
                 remindType = reminder.remindType,
                 title = reminder.title,
-                description = reminder.description
+                description = reminder.description,
+                hasCompleted = reminder.hasCompleted,
+                completedOn = reminder.completedOn,
+                hasCanceled = reminder.hasCanceled
             )
             val id = reminderDao.insertReminder(reminderEntity)
 
@@ -49,7 +51,8 @@ class ReminderRepositoryImpl(
             emit(Resource.Loading<Unit>())
             reminderDao.deleteReminder(reminder.id)
             val tag = "${appContext.getString(R.string.reminder_worker_tag)}${reminder.id}"
-            reminderWorkManager.cancelWorkRequest(appContext,tag)
+            reminderWorkManager.cancelWorkRequest(appContext, tag)
+            NotificationHelper().removeNotification(reminder.id.toInt(),appContext)
             emit(Resource.Success<Unit>(null))
         }
     }
@@ -69,9 +72,11 @@ class ReminderRepositoryImpl(
     override fun getReminders(): Flow<Resource<List<Reminder>>> {
         return flow {
             emit(Resource.Loading<List<Reminder>>())
-            emit(Resource.Success<List<Reminder>>(reminderDao.getReminders().map {
-                it.toReminder()
-            }.toList()))
+            reminderDao.getReminders().collect { reminderList ->
+                emit(
+                    Resource.Success<List<Reminder>>(reminderList.map { it.toReminder() })
+                )
+            }
         }
     }
 }
