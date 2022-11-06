@@ -1,6 +1,5 @@
 package com.coder.remindme.presentation
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -48,7 +47,6 @@ import java.util.*
 fun ReminderEditScreen(
     navController: NavController,
     remindersViewModel: RemindersViewModel,
-    reminder: Reminder? = null
 ) {
 
     Scaffold(
@@ -56,10 +54,10 @@ fun ReminderEditScreen(
             AppBar()
         }
     ) {
-        val titleInputValue = remember { mutableStateOf(TextFieldValue(reminder?.title ?: "")) }
+        val titleInputValue = remember { mutableStateOf(TextFieldValue()) }
         val titleError = remember { mutableStateOf("") }
         val descriptionInputValue =
-            remember { mutableStateOf(TextFieldValue(reminder?.description ?: "")) }
+            remember { mutableStateOf(TextFieldValue()) }
         val descriptionError = remember { mutableStateOf("") }
 
         var localDateTime: LocalDateTime? by remember {
@@ -67,11 +65,8 @@ fun ReminderEditScreen(
         }
 
         val remindTypeState = remember {
-            mutableStateOf(reminder?.remindType ?: RemindType.NONE)
+            mutableStateOf(RemindType.NONE)
         }
-
-        if (reminder != null)
-            localDateTime = LocalDateTime.ofInstant(reminder.reminderStart, ZoneId.systemDefault())
 
         val mContext = LocalContext.current
 
@@ -124,8 +119,7 @@ fun ReminderEditScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                OutlinedTextFieldValidation(
-                    value = descriptionInputValue.value.text,
+                OutlinedTextFieldValidation(value = descriptionInputValue.value.text,
                     onValueChange = {
                         descriptionInputValue.value = TextFieldValue(it)
                     },
@@ -165,18 +159,10 @@ fun ReminderEditScreen(
                 TimePicker(localDateTime) {
                     localDateTime = it
                 }
-                RepeatTypeDropDown(defaultReminderType = reminder?.remindType) {
+                RepeatTypeDropDown {
                     remindTypeState.value = it
                 }
 
-                if (localDateTime != null)
-                    Text(
-                        text = "Your Selected Date and Time: ${
-                            localDateTime!!.toLocalDate()
-                        } and ${localDateTime!!.toLocalTime()}",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -203,10 +189,6 @@ fun ReminderEditScreen(
                         localDateTime!!.atZone(ZoneId.systemDefault()).toInstant()
                     )
                     navController.popBackStack()
-
-                    if(reminder != null){
-                        (mContext as Activity?)?.finish()
-                    }
                 }) {
                     Text(text = "Set Reminder")
                 }
@@ -254,7 +236,7 @@ fun validateData(
 }
 
 @Composable
-fun RepeatTypeDropDown(defaultReminderType: RemindType?, remindTypeClick: (RemindType) -> Unit) {
+fun RepeatTypeDropDown(remindTypeClick: (RemindType) -> Unit) {
 
     var mExpanded by remember { mutableStateOf(false) }
 
@@ -263,7 +245,7 @@ fun RepeatTypeDropDown(defaultReminderType: RemindType?, remindTypeClick: (Remin
         it.name
     }.toList()
 
-    var mSelectedText by remember { mutableStateOf(defaultReminderType?.name ?: "") }
+    var mSelectedText by remember { mutableStateOf("") }
 
     var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
 
@@ -367,6 +349,7 @@ fun DatePicker(onDateSelected: (LocalDateTime) -> Unit) {
             Text(text = "Open Date Picker", color = Color.White)
         }
         Spacer(modifier = Modifier.size(50.dp))
+        Text(text = "Selected Date: ${mDate.value}", fontSize = 15.sp)
     }
 }
 
@@ -406,5 +389,6 @@ fun TimePicker(localDateTime: LocalDateTime?, onTimeSelected: (LocalDateTime) ->
             Text(text = "Open Time Picker", color = Color.White)
         }
         Spacer(modifier = Modifier.size(50.dp))
+        Text(text = "Selected Date: ${mTime.value}", fontSize = 15.sp)
     }
 }
