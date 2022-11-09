@@ -11,6 +11,7 @@ reminder app
 3. Hilt
 4. Livedata
 5. Kotlin Flow
+6. NotificationCompat
 
 **This app currenlty has 2 screens**
 1. To see list reminders in progress and completed and can delete the reminders by swipping and clicking cross icon.
