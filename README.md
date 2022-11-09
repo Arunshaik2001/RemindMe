@@ -15,7 +15,7 @@ reminder app
 
 **This app currenlty has 2 screens**
 1. To see list reminders in progress and completed and can delete the reminders by swipping and clicking cross icon.
- <img src = https://user-images.githubusercontent.com/50947867/200899703-81928900-c125-4c64-8fc5-6b977ed53394.jpg height = 500px />
+ <img src = https://user-images.githubusercontent.com/50947867/200900134-43d1d26b-ad6d-4d2f-a6ff-9cbdbaf57a65.jpg height = 500px />
 
 2. To set reminders.
  <img src = https://user-images.githubusercontent.com/50947867/200899703-81928900-c125-4c64-8fc5-6b977ed53394.jpg height = 500px />
