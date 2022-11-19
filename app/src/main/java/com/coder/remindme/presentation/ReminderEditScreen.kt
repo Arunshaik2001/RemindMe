@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -205,6 +207,9 @@ fun ReminderEditScreen(
                     navController.popBackStack()
 
                     if(reminder != null){
+                        Intent("com.example.RESULT_ACTION", Uri.parse("content://done")).also { result ->
+                            (mContext as Activity?)?.setResult(Activity.RESULT_OK, result)
+                        }
                         (mContext as Activity?)?.finish()
                     }
                 }) {

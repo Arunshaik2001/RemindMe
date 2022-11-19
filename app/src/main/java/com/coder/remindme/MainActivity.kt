@@ -1,5 +1,6 @@
 package com.coder.remindme
 
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -35,12 +36,11 @@ class MainActivity : ComponentActivity() {
 
         val data: Uri? = intent.data
 
-        Log.i(Constants.TAG, data.toString())
+        Log.i(Constants.TAG,data.toString())
 
         if (Intent.ACTION_SEND == intent.action) {
             val isSchemaSame = data?.scheme == this.getString(R.string.app_name_lowercase)
             val isHostSame = data?.host == "reminder"
-            Log.i(Constants.TAG, "$isSchemaSame $isHostSame")
             if (isSchemaSame && isHostSame) {
                 val title = data?.getQueryParameter("title")
                 val description = data?.getQueryParameter("description")
@@ -50,7 +50,6 @@ class MainActivity : ComponentActivity() {
 
                 val startTimeInInstant = startTimeInMillis?.toLong()
                     ?.let { Instant.ofEpochMilli(it) }
-                Log.i(Constants.TAG, "$title $description $startTimeInMillis $reminderType")
                 showSetReminderScreen.postValue(true)
                 reminderData.postValue(
                     Reminder(
@@ -62,6 +61,12 @@ class MainActivity : ComponentActivity() {
                         reminderEnd = Instant.now()
                     )
                 )
+            }
+            else{
+                Intent("com.coder.remindme.RESULT_ACTION", Uri.parse("content://fail")).also { result ->
+                    setResult(Activity.RESULT_CANCELED, result)
+                }
+                finish()
             }
         }
 
