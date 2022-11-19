@@ -3,6 +3,7 @@ package com.coder.remindme.presentation
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.util.Log
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -35,9 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavController
+import com.coder.core.util.Constants
 import com.coder.remindme.domain.model.RemindType
 import com.coder.remindme.domain.model.Reminder
 import com.coder.remindme.presentation.viewmodel.RemindersViewModel
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
@@ -47,22 +50,42 @@ import java.util.*
 fun ReminderEditScreen(
     navController: NavController,
     remindersViewModel: RemindersViewModel,
+    reminder: Reminder?
 ) {
+
+
+    Log.i(Constants.TAG,reminder.toString())
+    var title = ""
+    var description = ""
+    var reminderType = ""
+    var reminderTime: LocalDateTime? = null
+
+    if(reminder != null) {
+        title = reminder.title
+        description = reminder.description
+        reminderType = reminder.remindType.name
+        reminderTime = LocalDateTime.ofInstant(reminder.reminderStart, ZoneId.systemDefault())
+    }
 
     Scaffold(
         topBar = {
             AppBar()
         }
     ) {
-        val titleInputValue = remember { mutableStateOf(TextFieldValue()) }
+        val titleInputValue = remember {
+            mutableStateOf(TextFieldValue())
+        }
+        titleInputValue.value = TextFieldValue(text = title)
         val titleError = remember { mutableStateOf("") }
-        val descriptionInputValue =
-            remember { mutableStateOf(TextFieldValue()) }
+
+        val descriptionInputValue = remember { mutableStateOf(TextFieldValue()) }
         val descriptionError = remember { mutableStateOf("") }
+        descriptionInputValue.value = TextFieldValue(text = description)
 
         var localDateTime: LocalDateTime? by remember {
             mutableStateOf(null)
         }
+        localDateTime = reminderTime
 
         val remindTypeState = remember {
             mutableStateOf(RemindType.NONE)
@@ -152,14 +175,14 @@ fun ReminderEditScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                DatePicker {
+                DatePicker(reminderDate = reminderTime?.toLocalDate()) {
                     localDateTime = it
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 TimePicker(localDateTime) {
                     localDateTime = it
                 }
-                RepeatTypeDropDown {
+                RepeatTypeDropDown(reminderType = reminderType) {
                     remindTypeState.value = it
                 }
 
@@ -186,7 +209,8 @@ fun ReminderEditScreen(
                         titleInputValue.value.text,
                         descriptionInputValue.value.text,
                         remindTypeState.value,
-                        localDateTime!!.atZone(ZoneId.systemDefault()).toInstant()
+                        localDateTime!!.atZone(ZoneId.systemDefault()).toInstant(),
+                        reminderId = reminder?.id
                     )
                     navController.popBackStack()
                 }) {
@@ -236,7 +260,7 @@ fun validateData(
 }
 
 @Composable
-fun RepeatTypeDropDown(remindTypeClick: (RemindType) -> Unit) {
+fun RepeatTypeDropDown(reminderType: String,remindTypeClick: (RemindType) -> Unit) {
 
     var mExpanded by remember { mutableStateOf(false) }
 
@@ -245,7 +269,13 @@ fun RepeatTypeDropDown(remindTypeClick: (RemindType) -> Unit) {
         it.name
     }.toList()
 
-    var mSelectedText by remember { mutableStateOf("") }
+    var mSelectedText by remember {
+        mutableStateOf(reminderType)
+    }
+
+    LaunchedEffect(key1 = reminderType){
+        mSelectedText = reminderType
+    }
 
     var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
 
@@ -302,7 +332,7 @@ fun BoxWithLayout(content: @Composable ColumnScope.() -> Unit) {
 }
 
 @Composable
-fun DatePicker(onDateSelected: (LocalDateTime) -> Unit) {
+fun DatePicker(reminderDate: LocalDate?,onDateSelected: (LocalDateTime) -> Unit) {
     val mContext = LocalContext.current
 
     val mYear: Int
@@ -318,6 +348,13 @@ fun DatePicker(onDateSelected: (LocalDateTime) -> Unit) {
     mCalendar.time = Date()
 
     val mDate = remember { mutableStateOf("") }
+
+    if(reminderDate != null) {
+        LaunchedEffect(key1 = true) {
+            mDate.value =
+                "${reminderDate.dayOfMonth}/${reminderDate.monthValue}/${reminderDate.year}"
+        }
+    }
 
     val mDatePickerDialog = DatePickerDialog(
         mContext,
@@ -362,6 +399,12 @@ fun TimePicker(localDateTime: LocalDateTime?, onTimeSelected: (LocalDateTime) ->
     val mMinute = mCalendar[Calendar.MINUTE]
 
     val mTime = remember { mutableStateOf("") }
+
+    if(localDateTime != null) {
+        LaunchedEffect(key1 = true,) {
+            mTime.value = "${localDateTime.hour}:${localDateTime.minute}"
+        }
+    }
 
     val mTimePickerDialog = TimePickerDialog(
         mContext,

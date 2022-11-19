@@ -1,10 +1,12 @@
 package com.coder.remindme.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.coder.core.util.Constants
 import com.coder.core.util.Resource
 import com.coder.remindme.domain.model.RemindType
 import com.coder.remindme.domain.model.Reminder
@@ -24,6 +26,9 @@ class RemindersViewModel @Inject constructor(
 
     var reminderListState by mutableStateOf<Resource<List<Reminder>>>(Resource.Loading<List<Reminder>>())
 
+    fun getReminderById(id: Long) =
+        remindersRepository.getReminderByIdUseCase(id)
+
     fun getAllReminders() =
         viewModelScope.launch {
             remindersRepository.getRemindersUseCase().collect{
@@ -35,11 +40,13 @@ class RemindersViewModel @Inject constructor(
         title: String,
         description: String,
         repeat: RemindType,
-        time: Instant
+        time: Instant,
+        reminderId: Long? = null,
     ) = viewModelScope.launch {
+        Log.i(Constants.TAG,reminderId.toString())
         remindersRepository.insertReminderUseCase(
             Reminder(
-                -1,
+                reminderId,
                 title,
                 description,
                 time,

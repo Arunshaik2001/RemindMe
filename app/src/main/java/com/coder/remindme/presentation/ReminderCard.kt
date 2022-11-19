@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter
 val colorArray = listOf(Color.Gray, Color.Blue, Color.Magenta, Color.Red)
 
 @Composable
-fun ReminderCard(reminder: Reminder, onRemoveClick: (Reminder) -> Unit) {
+fun ReminderCard(reminder: Reminder, onEdit: (Reminder) -> Unit, onRemoveClick: (Reminder) -> Unit) {
     val dateTimeFormatter = DateTimeFormatter
         .ofPattern("dd-MM-yyyy hh:mm a")
     val startDateTime = dateTimeFormatter.format(
@@ -39,10 +39,13 @@ fun ReminderCard(reminder: Reminder, onRemoveClick: (Reminder) -> Unit) {
     Column(
         horizontalAlignment = Alignment.Start, modifier = Modifier
             .background(
-                color = colorArray[reminder.id.toInt() % colorArray.size],
+                color = colorArray[reminder.id!!.toInt() % colorArray.size],
                 RoundedCornerShape(15.dp)
             )
             .padding(10.dp)
+            .clickable {
+                onEdit(reminder)
+            }
     ) {
         Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
             Image(

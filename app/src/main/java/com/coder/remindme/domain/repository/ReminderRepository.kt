@@ -10,7 +10,7 @@ interface ReminderRepository {
 
     fun deleteReminder(reminder: Reminder): Flow<Resource<Unit>>
 
-    fun getReminderById(reminderId: Long): Flow<Resource<Reminder>>
+    fun getReminderById(reminderId: Long): Reminder
 
     fun updateReminder(reminder: Reminder): Flow<Resource<Unit>>
 

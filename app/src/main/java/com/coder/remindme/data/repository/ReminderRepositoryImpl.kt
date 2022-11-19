@@ -25,6 +25,7 @@ class ReminderRepositoryImpl(
         return flow {
             emit(Resource.Loading<Long>())
             val reminderEntity = ReminderEntity(
+                reminder.id,
                 reminderStart = reminder.reminderStart,
                 reminderEnd = reminder.reminderEnd,
                 remindType = reminder.remindType,
@@ -47,6 +48,8 @@ class ReminderRepositoryImpl(
     }
 
     override fun deleteReminder(reminder: Reminder): Flow<Resource<Unit>> {
+        if(reminder.id == null)
+            return flow {  }
         return flow {
             emit(Resource.Loading<Unit>())
             reminderDao.deleteReminder(reminder.id)
@@ -57,12 +60,9 @@ class ReminderRepositoryImpl(
         }
     }
 
-    override fun getReminderById(reminderId: Long): Flow<Resource<Reminder>> {
-        return flow {
-            emit(Resource.Loading<Reminder>())
-            val reminderEntity = reminderDao.getReminderById(reminderId)
-            emit(Resource.Success<Reminder>(reminderEntity.toReminder()))
-        }
+    override fun getReminderById(reminderId: Long): Reminder {
+        val reminderEntity = reminderDao.getReminderById(reminderId)
+        return reminderEntity.toReminder()
     }
 
     override fun updateReminder(reminder: Reminder): Flow<Resource<Unit>> {

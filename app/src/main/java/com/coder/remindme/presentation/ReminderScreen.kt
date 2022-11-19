@@ -31,7 +31,7 @@ fun ReminderScreen(navController: NavController, remindersViewModel: RemindersVi
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.ReminderEditScreen.route)
+                    navController.navigate(Screen.ReminderEditScreen.withArgs("-1"))
                 }
             ) {
                 Icon(Icons.Filled.Add, "", tint = Color(R.color.purple_700))
@@ -44,7 +44,9 @@ fun ReminderScreen(navController: NavController, remindersViewModel: RemindersVi
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = "Your Reminders:", fontWeight = FontWeight.Bold, fontSize = 30.sp)
             Spacer(modifier = Modifier.height(10.dp))
-            RemindersList(remindersResource = remindersViewModel.reminderListState) {
+            RemindersList(remindersResource = remindersViewModel.reminderListState, onEdit = {
+                navController.navigate(Screen.ReminderEditScreen.withArgs(it.id.toString()))
+            }) {
                 remindersViewModel.deleteReminder(it)
             }
         }

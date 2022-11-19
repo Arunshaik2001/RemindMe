@@ -27,7 +27,7 @@ import com.coder.remindme.domain.model.Reminder
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RemindersList(remindersResource: Resource<List<Reminder>>, onRemoveClick: (Reminder) -> Unit) {
+fun RemindersList(remindersResource: Resource<List<Reminder>>,onEdit: (Reminder) -> Unit, onRemoveClick: (Reminder) -> Unit) {
 
     when (remindersResource) {
         is Resource.Success<List<Reminder>> -> {
@@ -48,7 +48,7 @@ fun RemindersList(remindersResource: Resource<List<Reminder>>, onRemoveClick: (R
             else {
                 LazyColumn(modifier = Modifier.padding(10.dp)) {
                     items(items = remindersResource.data, key = {
-                        it.id
+                        it.id!!
                     }){ reminder ->
                         val dismissState = rememberDismissState()
 
@@ -94,7 +94,9 @@ fun RemindersList(remindersResource: Resource<List<Reminder>>, onRemoveClick: (R
                                 }
                             },
                             dismissContent = {
-                                ReminderCard(reminder = reminder) {
+                                ReminderCard(reminder = reminder,onEdit = {
+                                    onEdit(it)
+                                }) {
                                     onRemoveClick(it)
                                 }
                                 Spacer(modifier = Modifier.height(5.dp))
