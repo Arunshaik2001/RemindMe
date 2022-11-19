@@ -23,6 +23,6 @@ remindme app is an app used to set reminders and at that specific time you will 
 
 
 **Work In Progress**:
-1. [x] Editing Reminders
-2. [] more beautiful UI
-3. [] dark theme
+[x] Editing Reminders
+[]  more beautiful UI
+[]  sync with backend
