@@ -5,7 +5,7 @@ RemindMe app is an app used to set reminders and at that specific time you will 
 
 **CLEAN architecture**
 
-**dependencies**:
+**Dependencies**:
 1. RoomDB.
 2. WorkManager.
 3. Hilt.
