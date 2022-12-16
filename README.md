@@ -3,7 +3,7 @@ RemindMe app is an app used to set reminders and at that specific time you will 
 
 # About this app
 
-**CLEAN architecture**
+**CLEAN Architecture**
 
 **Dependencies**:
 1. RoomDB.
