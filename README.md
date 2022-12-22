@@ -1,4 +1,4 @@
-# RemindMe
+# RemindMe:
 RemindMe app is an app used to set reminders and at that specific time you will get notifications and you set remind strategy as well.
 
 # About this app
